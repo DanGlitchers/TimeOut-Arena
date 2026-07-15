@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeOut Arena</title>
+    <style>
+        /* עיצוב באווירת משחקי הדיונון */
+        :root {
+            --bg-color: #0d0d0d;
+            --squid-pink: #FF005B;
+            --squid-green: #00A859;
+            --text-color: #f1f1f1;
+            --panel-bg: #1a1a1a;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--squid-pink);
+            padding: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 4px 15px rgba(255, 0, 91, 0.4);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--squid-pink);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(255, 0, 91, 0.2);
+            display: none; /* מוסתר כברירת מחדל */
+        }
+
+        .btn {
+            background-color: #5865F2; /* צבע דיסקורד */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #4752C4;
+        }
+
+        .btn-squid {
+            background-color: var(--squid-green);
+        }
+
+        .btn-squid:hover {
+            background-color: #008a48;
+        }
+
+        .btn-danger {
+            background-color: var(--squid-pink);
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--squid-green);
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #333;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: var(--squid-green);
+            width: 0%; /* יתעדכן דרך JS */
+            transition: width 0.5s;
+        }
+
+        input, select {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #222;
+            color: white;
+        }
+
+        #admin-panel {
+            border-color: var(--squid-green);
+            box-shadow: 0 0 15px rgba(0, 168, 89, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        ⏱️ TimeOut Arena 🐙
+    </header>
+
+    <div class="container">
+        <div id="login-section" class="card" style="display: block;">
+            <h2>ברוכים הבאים לארנה</h2>
+            <p>האם תשרוד את הטיים-אאוט או שתעלה לאדמין?</p>
+            <button class="btn" onclick="loginWithDiscord()">התחבר עם Discord</button>
+        </div>
+
+        <div id="dashboard-section" class="card">
+            <h2>הפרופיל שלך</h2>
+            <img id="user-avatar" class="profile-pic" src="" alt="Avatar">
+            <h3 id="user-name">טוען...</h3>
+            <p><strong>תפקיד נוכחי:</strong> <span id="user-role">שחקן רגיל</span></p>
+            <p><strong>נקודות:</strong> <span id="user-points">0</span> / <span id="points-needed">20</span></p>
+            
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="rank-up-msg" style="color: var(--squid-pink); font-weight: bold; margin-top: 10px;"></p>
+        </div>
+
+        <div id="tournaments-section" class="card">
+            <h2>טורנירים פתוחים להרשמה</h2>
+            <div id="tournaments-list">
+                <p>אין טורנירים פתוחים כרגע...</p>
+                </div>
+        </div>
+
+        <div id="admin-panel" class="card">
+            <h2 style="color: var(--squid-green);">👑 פאנל ניהול הארנה (Admin)</h2>
+            <hr style="border-color: #333;">
+            <h3>יצירת טורניר חדש</h3>
+            <input type="text" id="tourney-name" placeholder="שם הטורניר (לדוגמה: הישרדות סוף שבוע)">
+            <input type="number" id="tourney-limit" placeholder="הגבלת משתתפים (למשל: 10)">
+            <input type="text" id="tourney-timeout" placeholder="זמן טיים-אאוט למפסידים (למשל: 24 שעות)">
+            <button class="btn btn-squid" onclick="createTournament()">הכרז על טורניר!</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // 1. חיבור לפיירבייס (ההגדרות שסיפקת)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIDRU9o2Xpyv0R5YrNVYAFxFYz90nNtlk",
+            authDomain: "timeout-arena.firebaseapp.com",
+            projectId: "timeout-arena",
+            storageBucket: "timeout-arena.firebasestorage.app",
+            messagingSenderId: "12606780124",
+            appId: "1:12606780124:web:5b867ca4b3d3ad614a3a19",
+            measurementId: "G-T4MSJCC0N0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // 2. הגדרות מערכת ומשתמשים
+        const ADMIN_USERNAME = "datykvuktf";
+        const HELPERS = ["thestrong_", "ilay13111", "patrick84313"];
+        const DISCORD_CLIENT_ID = "1430142084903338066";
+
+        // 3. פונקציית התחברות לדיסקורד (Oauth2 Implicit Grant)
+        window.loginWithDiscord = function() {
+            const redirectUri = encodeURIComponent(window.location.href.split('#')[0]); // הכתובת הנוכחית של האתר
+            // שולח לדיסקורד רק עם ה-ID, בלי ה-Secret!
+            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
+            window.location.href = oauthUrl;
+        };
+
+        // 4. בדיקה האם חזרנו מדיסקורד עם טוקן התחברות
+        window.onload = async () => {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
+
+            if (accessToken) {
+                // אנחנו מחוברים! מסתירים את ההתחברות ומציגים את הפאנל
+                document.getElementById('login-section').style.display = 'none';
+                
+                try {
+                    // מושכים את המידע של המשתמש מדיסקורד
+                    const res = await fetch('https://discord.com/api/users/@me', {
+                        headers: { authorization: `${tokenType} ${accessToken}` }
+                    });
+                    const userData = await res.json();
+                    
+                    setupDashboard(userData);
+
+                } catch (error) {
+                    console.error("שגיאה במשיכת נתונים מדיסקורד:", error);
+                }
+            }
+        };
+
+        // 5. הגדרת הפאנל האישי ובדיקת תפקידים
+        async function setupDashboard(user) {
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.getElementById('tournaments-section').style.display = 'block';
+            
+            // תמונת פרופיל
+            const avatarUrl = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
+                : `https://cdn.discordapp.com/embed/avatars/1.png`;
+            document.getElementById('user-avatar').src = avatarUrl;
+            document.getElementById('user-name').innerText = user.username;
+
+            // זיהוי תפקיד המשתמש
+            let role = "שחקן רגיל";
+            let pointsNeeded = 20;
+
+            if (user.username === ADMIN_USERNAME) {
+                role = "👑 מנהל ארנה (Admin)";
+                document.getElementById('admin-panel').style.display = 'block'; // חשיפת פאנל הניהול!
+            } else if (HELPERS.includes(user.username)) {
+                role = "🛠️ הלפר (Helper)";
+                pointsNeeded = 10;
+            }
+
+            document.getElementById('user-role').innerText = role;
+            document.getElementById('points-needed').innerText = pointsNeeded;
+
+            // כאן נשמור/נמשוך את המשתמש ממסד הנתונים בפיירבייס (Firestore)
+            const userRef = doc(db, "users", user.id);
+            const docSnap = await getDoc(userRef);
+            
+            let points = 0;
+            if (docSnap.exists()) {
+                points = docSnap.data().points;
+            } else {
+                // משתמש חדש, יוצרים לו רשומה
+                await setDoc(userRef, {
+                    username: user.username,
+                    role: role,
+                    points: 0
+                });
+            }
+
+            document.getElementById('user-points').innerText = points;
+
+            // חישוב פס התקדמות
+            let percentage = (points / pointsNeeded) * 100;
+            if (percentage > 100) percentage = 100;
+            document.getElementById('progress-bar').style.width = percentage + "%";
+
+            if (points >= pointsNeeded) {
+                document.getElementById('rank-up-msg').innerText = "🎉 הגעת ליעד! מנהל המערכת יעלה אותך לצוות בקרוב!";
+            } else {
+                let remaining = pointsNeeded - points;
+                document.getElementById('rank-up-msg').innerText = `עוד ${remaining} נקודות לקידום! אל תחטוף טיים-אאוט.`;
+            }
+        }
+
+        // 6. פונקציית דמי (לבינתיים) ליצירת טורניר בפאנל ניהול
+        window.createTournament = function() {
+            const name = document.getElementById('tourney-name').value;
+            const limit = document.getElementById('tourney-limit').value;
+            const timeout = document.getElementById('tourney-timeout').value;
+
+            if(!name || !limit || !timeout) {
+                alert("חייב למלא את כל הפרטים כדי להתחיל טורניר!");
+                return;
+            }
+
+            alert(`הטורניר "${name}" נוצר בהצלחה עם הגבלה של ${limit} שחקנים ועונש של ${timeout} טיים-אאוט! (בעתיד זה יישמר לפיירבייס)`);
+            document.getElementById('tourney-name').value = '';
+            document.getElementById('tourney-limit').value = '';
+            document.getElementById('tourney-timeout').value = '';
+        }
+    </script>
+</body>
+</html>
