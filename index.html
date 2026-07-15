@@ -3,222 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimeOut Arena - חוקים חדשים. משחק חדש.</title>
-    <style>
-        /* === הגדרות צבעים ופונטים === */
-        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap');
-        
-        :root {
-            --bg-dark: #0a0a0c;
-            --card-bg: #16161a;
-            --squid-pink: #FF005B;
-            --squid-green: #00A859;
-            --squid-blue: #234E84;
-            --text-light: #f5f5f5;
-            --text-muted: #a0a0a0;
+    <title>TimeOut Arena 🦑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sg: {
+                            green: '#00ff88',
+                            pink: '#ff0066',
+                            dark: '#0a0a0a',
+                            card: '#111111',
+                            border: '#222222'
+                        }
+                    },
+                    fontFamily: {
+                        heebo: ['Heebo', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
         }
-
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Heebo', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            margin: 0;
-            padding: 0;
-            background-image: radial-gradient(circle at 50% 0%, #1a000a 0%, transparent 50%);
-            min-height: 100vh;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
         }
-
-        /* === עיצוב כללי === */
-        header {
-            background: linear-gradient(90deg, #FF005B 0%, #a3003a 100%);
-            padding: 25px;
-            text-align: center;
-            font-size: 2.5em;
+        .bg-grid {
+            background-image: 
+                linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .neon-green {
+            text-shadow: 0 0 10px rgba(0,255,136,0.5), 0 0 20px rgba(0,255,136,0.3);
+        }
+        .neon-pink {
+            text-shadow: 0 0 10px rgba(255,0,102,0.5), 0 0 20px rgba(255,0,102,0.3);
+        }
+        .glow-green { box-shadow: 0 0 20px rgba(0,255,136,0.2); }
+        .glow-pink { box-shadow: 0 0 20px rgba(255,0,102,0.2); }
+        .btn-sg {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000;
             font-weight: 900;
-            text-shadow: 0px 0px 15px rgba(255, 0, 91, 0.8);
-            box-shadow: 0 4px 20px rgba(255, 0, 91, 0.3);
-            letter-spacing: 2px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 0 20px;
-            display: grid;
-            gap: 30px;
-            grid-template-columns: 1fr;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: none; /* מוסתר עד שמתחברים */
-            animation: fadeIn 0.8s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* קווים זוהרים בכרטיסיות */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; width: 100%; height: 4px;
-            background: var(--squid-pink);
-        }
-
-        h2 { margin-top: 0; color: white; display: flex; align-items: center; gap: 10px; }
-        h3 { color: var(--squid-pink); margin-bottom: 5px; }
-
-        /* === כפתורים === */
-        .btn {
-            background-color: #5865F2; /* Discord Color */
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.2em;
-            border-radius: 8px;
-            cursor: pointer;
             transition: all 0.3s ease;
-            font-family: inherit;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
-        .btn:hover { background-color: #4752C4; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4); }
-        .btn-green { background-color: var(--squid-green); }
-        .btn-green:hover { background-color: #008a48; box-shadow: 0 5px 15px rgba(0, 168, 89, 0.4); }
-        .btn-pink { background-color: var(--squid-pink); }
-        .btn-pink:hover { background-color: #d1004a; box-shadow: 0 5px 15px rgba(255, 0, 91, 0.4); }
-        .btn:disabled { background-color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        /* === פרופיל אישי === */
-        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-        .profile-pic { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--squid-green); box-shadow: 0 0 15px rgba(0, 168, 89, 0.5); }
-        .profile-info h3 { color: white; font-size: 1.8em; margin: 0; }
-        .role-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 0.9em; font-weight: bold; background: #333; margin-top: 5px; }
-        .role-admin { background: #FFD700; color: black; }
-        .role-helper { background: var(--squid-blue); color: white; }
-        
-        /* מד התקדמות */
-        .stats-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #222; }
-        .progress-bar-container { width: 100%; background-color: #222; border-radius: 10px; margin-top: 10px; height: 25px; position: relative; overflow: hidden; border: 1px solid #444; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #00A859 0%, #00ff88 100%); width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(0, 168, 89, 0.8); }
-        .progress-text { position: absolute; width: 100%; text-align: center; top: 2px; font-size: 0.9em; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; }
-
-        /* === טפסים ורשימות === */
-        input, select { width: 100%; padding: 12px; margin: 8px 0 20px; border-radius: 8px; border: 1px solid #444; background-color: #0f0f0f; color: white; box-sizing: border-box; font-family: inherit; font-size: 1em; transition: 0.3s; }
-        input:focus { outline: none; border-color: var(--squid-pink); box-shadow: 0 0 10px rgba(255,0,91,0.2); }
-        
-        .tourney-item { background: #222; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-right: 5px solid var(--squid-pink); display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .tourney-item:hover { background: #2a2a2a; }
-        .tourney-details p { margin: 5px 0; color: var(--text-muted); font-size: 0.95em; }
-        .tourney-details strong { color: white; }
-        
-        #admin-panel { border-top: none; }
-        #admin-panel::before { background: #FFD700; } /* אדמין זהוב */
-
-        /* טבלת מובילים */
-        .leaderboard-item { display: flex; justify-content: space-between; padding: 10px 15px; background: #1a1a1a; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--squid-blue); }
-        .leaderboard-item.top-1 { border-left-color: #FFD700; background: rgba(255, 215, 0, 0.1); }
-
-        /* === התראות צפות (Toasts) === */
-        #toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: #333; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-right: 5px solid var(--squid-green); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; font-weight: bold; }
-        .toast.error { border-right-color: var(--squid-pink); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
+        .btn-sg:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0,255,136,0.4);
+        }
+        .btn-pink {
+            background: linear-gradient(135deg, #ff0066 0%, #cc0052 100%);
+            color: #fff;
+            font-weight: 900;
+            transition: all 0.3s ease;
+        }
+        .btn-pink:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255,0,102,0.4);
+        }
+        .card-sg {
+            background: #111;
+            border: 1px solid #222;
+            transition: all 0.3s ease;
+        }
+        .card-sg:hover {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0,255,136,0.1);
+        }
+        .input-sg {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .input-sg:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0,255,136,0.2);
+        }
+        .role-admin { background: #ff0066; color: white; }
+        .role-helper { background: #00ff88; color: black; }
+        .role-player { background: #444; color: white; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .slide-in { animation: slideIn 0.5s ease-out; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .number-circle {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px;
+        }
+        .triangle-shape {
+            width: 0; height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #00ff88;
+            display: inline-block;
+        }
+        .square-shape {
+            width: 35px; height: 35px;
+            background: #ff0066;
+            display: inline-block;
+        }
+        .circle-shape {
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            background: #00ff88;
+            display: inline-block;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .loading-overlay {
+            position: fixed; inset: 0; background: #0a0a0a; z-index: 9999;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 16px 24px; border-radius: 12px; z-index: 9999;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .countdown-ring {
+            width: 120px; height: 120px;
+            border: 4px solid #222;
+            border-top-color: #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="bg-grid min-h-screen">
 
-    <header>⏱️ TimeOut Arena 🐙</header>
-
-    <div class="container">
-        
-        <!-- התחברות -->
-        <div id="login-section" class="card" style="display: block;">
-            <h2>ברוכים הבאים לארנה המשחקים</h2>
-            <p>הירשמו לטורנירים, נצחו חברים, צברו נקודות והימנעו מהטיים-אאוט הנורא!</p>
-            <br>
-            <button class="btn" onclick="loginWithDiscord()">🎮 התחברות באמצעות Discord</button>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-overlay">
+        <div class="flex flex-col items-center gap-6">
+            <div class="flex gap-4 mb-4">
+                <div class="circle-shape"></div>
+                <div class="triangle-shape mx-2"></div>
+                <div class="square-shape"></div>
+            </div>
+            <h1 class="text-4xl font-orbitron font-black text-sg-green neon-green tracking-widest">TIMEOUT ARENA</h1>
+            <div class="countdown-ring mt-4"></div>
+            <p class="text-gray-500 text-sm mt-4">טוען את המשחק...</p>
         </div>
-
-        <!-- דאשבורד אישי -->
-        <div id="dashboard-section" class="card">
-            <div class="profile-header">
-                <img id="user-avatar" class="profile-pic" src="" alt="Avatar">
-                <div class="profile-info">
-                    <h3 id="user-name">טוען נתונים...</h3>
-                    <span id="user-role" class="role-badge">טוען תפקיד...</span>
-                </div>
-            </div>
-            
-            <div class="stats-box">
-                <p><strong>נקודות בארנה:</strong> <span id="user-points" style="font-size: 1.2em; color: var(--squid-green);">0</span> / <span id="points-needed">20</span></p>
-                <div class="progress-bar-container">
-                    <div id="progress-bar" class="progress-bar"></div>
-                    <div class="progress-text" id="progress-text">0%</div>
-                </div>
-                <p id="rank-up-msg" style="margin-top: 15px; color: var(--text-muted); font-size: 0.9em;"></p>
-            </div>
-        </div>
-
-        <!-- לוח הטורנירים הפעילים למשתמשים -->
-        <div id="tournaments-section" class="card">
-            <h2>⚔️ זירת הטורנירים הפעילים</h2>
-            <p style="color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">רשימת המשחקים שפתוחים כרגע להרשמה.</p>
-            <div id="tournaments-list">
-                <p>טוען טורנירים מזירת המשחקים...</p>
-            </div>
-        </div>
-
-        <!-- טבלת מובילים -->
-        <div id="leaderboard-section" class="card">
-            <h2>🏆 טבלת המובילים (Top 5)</h2>
-            <div id="leaderboard-list">
-                <p>טוען נתונים...</p>
-            </div>
-        </div>
-
-        <!-- פאנל ניהול אדמין (רק ל-datykvuktf) -->
-        <div id="admin-panel" class="card">
-            <h2 style="color: #FFD700;">👑 לוח בקרת מנהל ארנה</h2>
-            <p>מכאן אתה שולט במשחק. צור טורנירים, בחר מנצחים וחלק נקודות (או עונשים).</p>
-            
-            <div style="background: #222; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed #555;">
-                <h3>➕ הכרזת טורניר חדש</h3>
-                <input type="text" id="tourney-name" placeholder="שם הטורניר (לדוגמה: מלחמת יום שישי)">
-                <input type="number" id="tourney-limit" placeholder="כמות שחקנים מקסימלית (למשל: 10)">
-                <input type="text" id="tourney-timeout" placeholder="העונש למפסידים (למשל: שעתיים טיים-אאוט)">
-                <button class="btn btn-pink" onclick="createTournament()">הכרז על הטורניר עכשיו</button>
-            </div>
-
-            <div id="admin-tournaments-manage">
-                <h3>ניהול טורנירים באוויר</h3>
-                <div id="admin-tournaments-list">
-                    <!-- כאן יופיעו טורנירים לניהול -->
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- מערכת התראות -->
-    <div id="toast-container"></div>
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
 
-    <!-- Firebase Scripts -->
+    <!-- Navigation -->
+    <nav id="navbar" class="hidden fixed top-0 w-full bg-sg-dark/90 backdrop-blur-md border-b border-sg-border z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex gap-1">
+                    <div class="w-3 h-3 rounded-full bg-sg-green"></div>
+                    <div class="w-0 h-0 border-l-[6px] border-r-[6px] border-b-[10px] border-l-transparent border-r-transparent border-b-sg-pink"></div>
+                    <div class="w-3 h-3 bg-sg-green"></div>
+                </div>
+                <span class="font-orbitron font-black text-xl text-sg-green tracking-wider">TIMEOUT ARENA</span>
+            </div>
+            <div class="flex items-center gap-4" id="navItems">
+                <button onclick="showSection('tournaments')" class="text-gray-300 hover:text-sg-green transition font-bold text-sm">טורנירים</button>
+                <button onclick="showSection('leaderboard')" class="text-gray-300 hover:text-sg-green transition font-bold text-sm">טבלת מובילים</button>
+                <button id="adminNavBtn" onclick="showSection('admin')" class="hidden text-sg-pink hover:text-white transition font-bold text-sm">פאנל אדמין</button>
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('profile')">
+                    <img id="navAvatar" src="" class="w-8 h-8 rounded-full border-2 border-sg-green hidden">
+                    <span id="navUsername" class="text-sg-green font-bold text-sm"></span>
+                </div>
+                <button onclick="logout()" class="text-gray-500 hover:text-red-500 transition text-sm">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section id="loginSection" class="hidden min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-sg-green rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-20 right-20 w-64 h-64 bg-sg-pink rounded-full blur-[100px]"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-4 max-w-md w-full">
+            <div class="flex justify-center gap-4 mb-8">
+                <div class="circle-shape glow-green"></div>
+                <div class="triangle-shape glow-pink"></div>
+                <div class="square-shape glow-green"></div>
+            </div>
+            
+            <h1 class="text-5xl font-orbitron font-black mb-2 text-sg-green neon-green">TIMEOUT ARENA</h1>
+            <p class="text-gray-400 mb-10 text-lg">האתר הרשמי לטורנירי TimeOut</p>
+            
+            <div class="space-y-4">
+                <a id="discordLoginBtn" href="#" class="btn-sg w-full py-4 rounded-xl flex items-center justify-center gap-3 text-lg">
+                    <i class="fab fa-discord text-2xl"></i>
+                    <span>התחבר עם Discord</span>
+                </a>
+                
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-sg-dark text-gray-500">או</span>
+                    </div>
+                </div>
+                
+                <button onclick="showDemoLogin()" class="w-full py-3 rounded-xl border border-sg-green/30 text-sg-green hover:bg-sg-green/10 transition font-bold">
+                    מצב הדגמה (ללא Discord)
+                </button>
+            </div>
+
+            <div id="demoLoginForm" class="hidden mt-6 p-6 card-sg rounded-xl text-right">
+                <h3 class="text-sg-green font-bold mb-4">כניסת הדגמה</h3>
+                <input type="text" id="demoUsername" placeholder="שם משתמש בדיסקורד" class="input-sg w-full p-3 rounded-lg mb-3 text-right">
+                <button onclick="demoLogin()" class="btn-sg w-full py-3 rounded-lg">כניסה</button>
+                <p class="text-gray-500 text-xs mt-3 text-center">במצב זה הנתונים נשמרים מקומית</p>
+            </div>
+
+            <div class="mt-8 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg text-right">
+                <p class="text-yellow-500 text-xs font-bold mb-1">⚠️ חשוב!</p>
+                <p class="text-yellow-400/80 text-xs">לשימוש אמיתי נדרח שרת backend להחלפת הקוד מדיסקורד. הקוד כולל דוגמת Node.js.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="hidden pt-20 pb-10 px-4 max-w-7xl mx-auto">
+
+        <!-- Tournaments Section -->
+        <section id="tournamentsSection" class="slide-in">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-orbitron font-black text-sg-green">טורנירים פעילים</h2>
+                    <p class="text-gray-400 mt-1">הירשם לטורניר והתחרה על הנקודות</p>
+                </div>
+                <button id="createTournamentBtn" onclick="openCreateModal()" class="hidden btn-pink px-6 py-3 rounded-xl">
+                    <i class="fas fa-plus ml-2"></i> צור טורניר
+                </button>
+            </div>
+
+            <div id="tournamentsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tournaments injected here -->
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profileSection" class="hidden slide-in">
+            <div class="max-w-2xl mx-auto">
+                <div class="card-sg rounded-2xl p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sg-green via-sg-pink to-sg-green"></div>
+                    
+                    <div class="relative inline-block mb-6">
+                        <img id="profileAvatar" src="" class="w-32 h-32 rounded-full border-4 border-sg-green mx-auto">
+                        <div id="profileRoleBadge" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-sm font-black">
+                            PLAYER
+                        </div>
+                    </div>
+                    
+                    <h2 id="profileUsername" class="text-3xl font-black mb-2"></h2>
+                    <p id="profileDiscordId" class="text-gray-500 text-sm mb-6 font-mono"></p>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-sg-dark rounded-xl p-4 border border-sg-border">
+                            <div class="text-3xl font-orbitron font-black text-sg-green" id="profilePoints">0</div>
+                            <div class="text-gray-400 text-xs mt-1">נקודות</div>
+                        </div>
+                        <div class="bg-sg-dark rounded-xl p-4 border border-sg-border">
+                            <div class="text-3xl font-orbitron font-black text-sg-pink" id="profileWins">0</div>
+                            <div class="text-gray-400 text-xs mt-1">נצחונות</div>
+                        </div>
+                        <div class="bg-sg-dark rounded-xl p-4 border border-sg-border">
+                            <div class="text-3xl font-orbitron font-black text-white" id="profileTournaments">0</div>
+                            <div class="text-gray-400 text-xs mt-1">טורנירים</div>
+                        </div>
+                    </div>
+
+                    <div id="promotionAlert" class="hidden bg-gradient-to-r from-sg-green/20 to-sg-pink/20 border border-sg-green/50 rounded-xl p-4 mb-4">
+                        <i class="fas fa-crown text-sg-green text-2xl mb-2"></i>
+                        <p class="text-sg-green font-bold" id="promotionText"></p>
+                    </div>
+
+                    <div class="text-right bg-sg-dark rounded-xl p-4 border border-sg-border">
+                        <h4 class="text-sg-green font-bold mb-3">התקדמות לצוות</h4>
+                        <div class="w-full bg-gray-800 rounded-full h-3 mb-2">
+                            <div id="progressBar" class="bg-gradient-to-r from-sg-green to-sg-pink h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <p class="text-gray-400 text-sm" id="progressText">0 / 20 נקודות נדרשות</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Panel -->
+        <section id="adminSection" class="hidden slide-in">
+            <h2 class="text-3xl font-orbitron font-black text-sg-pink mb-8">פאנל ניהול</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="card-sg rounded-xl p-6">
+                    <h3 class="text-sg-green font-bold text-xl mb-4">ניהול טורנירים</h3>
+                    <div id="adminTournamentsList" class="space-y-3">
+                        <!-- Admin tournament controls -->
+                    </div>
+                </div>
+                
+                <div class="card-sg rounded-xl p-6">
+                    <h3 class="text-sg-pink font-bold text-xl mb-4">התראות צוות</h3>
+                    <div id="adminNotifications" class="space-y-3">
+                        <p class="text-gray-500 text-center py-8">אין התראות חדשות</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-sg rounded-xl p-6">
+                <h3 class="text-white font-bold text-xl mb-4">ניהול שחקנים</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right">
+                        <thead class="border-b border-sg-border">
+                            <tr class="text-gray-400 text-sm">
+                                <th class="pb-3 pl-4">שחקן</th>
+                                <th class="pb-3 pl-4">תפקיד</th>
+                                <th class="pb-3 pl-4">נקודות</th>
+                                <th class="pb-3 pl-4">פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPlayersTable" class="text-sm">
+                            <!-- Players -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard -->
+        <section id="leaderboardSection" class="hidden slide-in">
+            <h2 class="text-3xl font-orbitron font-black text-sg-green mb-8">טבלת המובילים</h2>
+            <div class="card-sg rounded-xl overflow-hidden">
+                <table class="w-full text-right">
+                    <thead class="bg-sg-dark border-b border-sg-border">
+                        <tr class="text-sg-green text-sm">
+                            <th class="py-4 px-6">#</th>
+                            <th class="py-4 px-6">שחקן</th>
+                            <th class="py-4 px-6">תפקיד</th>
+                            <th class="py-4 px-6">נקודות</th>
+                            <th class="py-4 px-6">טורנירים</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Leaderboard rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Tournament Modal -->
+    <div id="createModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="card-sg rounded-2xl p-8 max-w-lg w-full relative">
+            <button onclick="closeCreateModal()" class="absolute top-4 left-4 text-gray-500 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-black text-sg-green mb-6">יצירת טורניר חדש</h3>
+            
+            <div class="space-y-4 text-right">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-2">שם הטורניר</label>
+                    <input type="text" id="tournamentName" class="input-sg w-full p-3 rounded-lg" placeholder="למשל: משחקי הדיונון #1">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-2">תיאור</label>
+                    <textarea id="tournamentDesc" class="input-sg w-full p-3 rounded-lg h-24 resize-none" placeholder="תיאור הטורניר והמשחק..."></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">מספר משתתפים מקסימלי</label>
+                        <input type="number" id="tournamentMax" class="input-sg w-full p-3 rounded-lg" value="16" min="2">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">זמן TimeOut (דקות)</label>
+                        <input type="number" id="tournamentTimeout" class="input-sg w-full p-3 rounded-lg" value="5" min="1">
+                    </div>
+                </div>
+                <button onclick="createTournament()" class="btn-sg w-full py-4 rounded-xl mt-4 text-lg">צור טורניר</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Detail Modal -->
+    <div id="tournamentModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="card-sg rounded-2xl p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeTournamentModal()" class="absolute top-4 left-4 text-gray-500 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div id="tournamentDetailContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase & App Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, onSnapshot, updateDoc, arrayUnion, query, orderBy, limit as fbLimit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, orderBy, where, increment, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDIDRU9o2Xpyv0R5YrNVYAFxFYz90nNtlk",
             authDomain: "timeout-arena.firebaseapp.com",
@@ -232,247 +442,597 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // הגדרות מערכת
-        const ADMIN_USERNAME = "datykvuktf";
-        const HELPERS = ["thestrong_", "ilay13111", "patrick84313"];
-        const DISCORD_CLIENT_ID = "1430142084903338066";
+        // Discord Config
+        const DISCORD_CLIENT_ID = '1430142084903338066';
+        const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+        const DISCORD_SCOPE = 'identify';
         
-        let currentUser = null; // ישמור את פרטי המשתמש המחובר
+        // Hardcoded users
+        const ADMIN_USERNAME = 'datykvuktf';
+        const HELPERS = ['thestrong_', 'ilay13111', 'patrick84313'];
+        const HELPER_PROMOTION_POINTS = 10;
+        const PLAYER_PROMOTION_POINTS = 20;
 
-        // פונקציית התראות יפה
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = type === 'success' ? `✅ ${message}` : `❌ ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
-        }
+        // State
+        let currentUser = null;
+        let tournamentsCache = [];
+        let usersCache = [];
 
-        // 1. התחברות דיסקורד
-        window.loginWithDiscord = function() {
-            const redirectUri = encodeURIComponent(window.location.href.split('#')[0]);
-            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
-            window.location.href = oauthUrl;
-        };
-
-        // 2. טיפול בטוקן בחזרה מהתחברות
-        window.onload = async () => {
-            const fragment = new URLSearchParams(window.location.hash.slice(1));
-            const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
-
-            if (accessToken) {
-                document.getElementById('login-section').style.display = 'none';
-                try {
-                    const res = await fetch('https://discord.com/api/users/@me', { headers: { authorization: `${tokenType} ${accessToken}` } });
-                    const userData = await res.json();
-                    await initUserSession(userData);
-                } catch (error) {
-                    showToast("שגיאה בהתחברות לדיסקורד", "error");
-                }
-            }
-        };
-
-        // 3. הגדרת משתמש במסד נתונים
-        async function initUserSession(user) {
-            let role = "Player";
-            let pointsNeeded = 20;
-            let displayRole = "שחקן רגיל";
-            let badgeClass = "";
-
-            if (user.username === ADMIN_USERNAME) { role = "Admin"; displayRole = "מנהל ארנה"; badgeClass = "role-admin"; }
-            else if (HELPERS.includes(user.username)) { role = "Helper"; pointsNeeded = 10; displayRole = "צוות הלפר"; badgeClass = "role-helper"; }
-
-            currentUser = { id: user.id, username: user.username, role: role };
-
-            // חשיפת הממשקים לפי תפקיד
-            document.getElementById('dashboard-section').style.display = 'block';
-            document.getElementById('tournaments-section').style.display = 'block';
-            document.getElementById('leaderboard-section').style.display = 'block';
-            if (role === "Admin") document.getElementById('admin-panel').style.display = 'block';
-
-            // עדכון UI למשתמש
-            const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/1.png`;
-            document.getElementById('user-avatar').src = avatarUrl;
-            document.getElementById('user-name').innerText = user.username;
-            const roleBadge = document.getElementById('user-role');
-            roleBadge.innerText = displayRole;
-            if(badgeClass) roleBadge.classList.add(badgeClass);
-
-            document.getElementById('points-needed').innerText = pointsNeeded;
-
-            // מאזין למסמך המשתמש (מעדכן את הניקוד בלייב!)
-            const userRef = doc(db, "users", user.id);
-            onSnapshot(userRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    updatePointsUI(docSnap.data().points, pointsNeeded);
-                } else {
-                    setDoc(userRef, { username: user.username, role: role, points: 0 });
-                    updatePointsUI(0, pointsNeeded);
-                }
-            });
-
-            // טעינת שאר האתר
-            listenToTournaments();
-            loadLeaderboard();
-        }
-
-        function updatePointsUI(points, needed) {
-            document.getElementById('user-points').innerText = points;
-            let percentage = Math.min((points / needed) * 100, 100);
-            document.getElementById('progress-bar').style.width = percentage + "%";
-            document.getElementById('progress-text').innerText = Math.round(percentage) + "%";
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check for Discord OAuth callback
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
             
-            const msgEl = document.getElementById('rank-up-msg');
-            if (points >= needed) {
-                msgEl.innerText = "🎉 הגעת ליעד! אתה זכאי לעלות לצוות!";
-                msgEl.style.color = "var(--squid-green)";
+            if (code) {
+                // In production, send code to backend to exchange for token
+                // For demo, we'll show a message and fall back to demo mode
+                showToast('קיבלנו קוד מדיסקורד! יש להחליף אותו בשרת backend', 'info');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // Check for saved session
+            const saved = localStorage.getItem('timeoutArenaUser');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                await ensureUserInDb(currentUser);
+                await initApp();
             } else {
-                msgEl.innerText = `עוד ${needed - points} נקודות לקידום! היזהר מהטיים-אאוט.`;
+                showLogin();
+            }
+            
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Discord OAuth URL
+        const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=${DISCORD_SCOPE}`;
+        document.getElementById('discordLoginBtn').href = discordAuthUrl;
+
+        // Demo Login
+        window.showDemoLogin = () => {
+            document.getElementById('demoLoginForm').classList.remove('hidden');
+        };
+
+        window.demoLogin = async () => {
+            const username = document.getElementById('demoUsername').value.trim();
+            if (!username) return showToast('הכנס שם משתמש', 'error');
+
+            const role = username === ADMIN_USERNAME ? 'admin' : 
+                        HELPERS.includes(username) ? 'helper' : 'player';
+            
+            currentUser = {
+                id: 'demo_' + username,
+                username: username,
+                avatar: `https://ui-avatars.com/api/?name=${username}&background=${role === 'admin' ? 'ff0066' : role === 'helper' ? '00ff88' : '444444'}&color=fff&size=128`,
+                role: role,
+                points: 0,
+                wins: 0,
+                tournamentsJoined: 0
+            };
+
+            // Check if user exists in DB, if so use those stats
+            const userRef = doc(db, 'users', currentUser.id);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                currentUser.points = data.points || 0;
+                currentUser.wins = data.wins || 0;
+                currentUser.tournamentsJoined = data.tournamentsJoined || 0;
+            } else {
+                await setDoc(userRef, currentUser);
+            }
+
+            localStorage.setItem('timeoutArenaUser', JSON.stringify(currentUser));
+            await initApp();
+        };
+
+        async function ensureUserInDb(user) {
+            const userRef = doc(db, 'users', user.id);
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) {
+                await setDoc(userRef, user);
             }
         }
 
-        // 4. יצירת טורניר (פאנל אדמין)
-        window.createTournament = async function() {
-            const name = document.getElementById('tourney-name').value;
-            const limit = parseInt(document.getElementById('tourney-limit').value);
-            const timeout = document.getElementById('tourney-timeout').value;
+        async function initApp() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+            
+            // Update nav
+            document.getElementById('navUsername').textContent = currentUser.username;
+            document.getElementById('navAvatar').src = currentUser.avatar;
+            document.getElementById('navAvatar').classList.remove('hidden');
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('createTournamentBtn').classList.remove('hidden');
+                document.getElementById('adminNavBtn').classList.remove('hidden');
+            }
 
-            if(!name || !limit || !timeout) return showToast("מלא את כל שדות הטורניר", "error");
-
-            try {
-                await addDoc(collection(db, "tournaments"), {
-                    name: name, maxPlayers: limit, timeoutPenalty: timeout,
-                    registeredPlayers: [], status: "open", createdAt: serverTimestamp()
-                });
-                showToast("הטורניר הוכרז ופתוח להרשמה!");
-                document.getElementById('tourney-name').value = '';
-                document.getElementById('tourney-limit').value = '';
-                document.getElementById('tourney-timeout').value = '';
-            } catch (error) { showToast("שגיאה ביצירת טורניר: ודא שחוקי האבטחה בפיירבייס פתוחים", "error"); }
+            // Load data
+            await loadTournaments();
+            await loadUsers();
+            updateProfile();
+            showSection('tournaments');
+            setupRealtimeListeners();
         }
 
-        // 5. האזנה לטורנירים בלייב (לכולם)
-        function listenToTournaments() {
-            const q = query(collection(db, "tournaments"), where("status", "==", "open"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const listEl = document.getElementById('tournaments-list');
-                const adminListEl = document.getElementById('admin-tournaments-list');
-                listEl.innerHTML = ''; 
-                if(adminListEl) adminListEl.innerHTML = '';
+        function showLogin() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+        }
 
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<p style="color:var(--text-muted)">אין טורנירים פתוחים כרגע. האדמין נח...</p>';
-                    if(adminListEl) adminListEl.innerHTML = '<p>אין טורנירים מנוהלים כרגע.</p>';
-                    return;
-                }
+        window.logout = () => {
+            localStorage.removeItem('timeoutArenaUser');
+            currentUser = null;
+            location.reload();
+        };
 
-                snapshot.forEach((docSnap) => {
-                    const tourney = docSnap.data();
-                    const tId = docSnap.id;
-                    const registeredCount = tourney.registeredPlayers.length;
-                    const isFull = registeredCount >= tourney.maxPlayers;
-                    
-                    // בדיקה האם המשתמש שלנו כבר נרשם
-                    const isUserRegistered = tourney.registeredPlayers.some(p => p.id === currentUser.id);
+        // Navigation
+        window.showSection = (section) => {
+            ['tournaments', 'profile', 'admin', 'leaderboard'].forEach(s => {
+                document.getElementById(s + 'Section').classList.add('hidden');
+            });
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            
+            if (section === 'profile') updateProfile();
+            if (section === 'admin' && currentUser.role === 'admin') loadAdminPanel();
+            if (section === 'leaderboard') updateLeaderboard();
+        };
 
-                    // --- תצוגת שחקן ---
-                    let joinBtnHtml = '';
-                    if (isUserRegistered) {
-                        joinBtnHtml = `<button class="btn btn-green" disabled>נרשמת בהצלחה</button>`;
-                    } else if (isFull) {
-                        joinBtnHtml = `<button class="btn" disabled>הטורניר מלא</button>`;
-                    } else {
-                        joinBtnHtml = `<button class="btn btn-green" onclick="joinTournament('${tId}')">הירשם למשחק</button>`;
-                    }
+        // Tournament Functions
+        async function loadTournaments() {
+            const q = query(collection(db, 'tournaments'), orderBy('createdAt', 'desc'));
+            const snap = await getDocs(q);
+            tournamentsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderTournaments();
+        }
 
-                    listEl.innerHTML += `
-                        <div class="tourney-item">
-                            <div class="tourney-details">
-                                <h3>${tourney.name}</h3>
-                                <p><strong>עונש למפסיד:</strong> ${tourney.timeoutPenalty} טיים-אאוט</p>
-                                <p><strong>משתתפים:</strong> ${registeredCount} / ${tourney.maxPlayers}</p>
+        function renderTournaments() {
+            const container = document.getElementById('tournamentsList');
+            if (tournamentsCache.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-12">אין טורנירים פעילים כרגע</div>';
+                return;
+            }
+
+            container.innerHTML = tournamentsCache.map(t => {
+                const isRegistered = t.players?.includes(currentUser.id);
+                const isFull = t.players?.length >= t.maxPlayers;
+                const canRegister = !isRegistered && !isFull && t.status === 'open';
+                const isAdmin = currentUser.role === 'admin';
+                
+                return `
+                    <div class="card-sg rounded-xl p-6 relative overflow-hidden group cursor-pointer" onclick="openTournamentDetail('${t.id}')">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-sg-green/10 to-transparent"></div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-black text-white group-hover:text-sg-green transition">${t.name}</h3>
+                                <p class="text-gray-400 text-sm mt-1 line-clamp-2">${t.description || ''}</p>
                             </div>
-                            <div>${joinBtnHtml}</div>
+                            <div class="number-circle bg-sg-dark border border-sg-green text-sg-green">
+                                ${t.players?.length || 0}/${t.maxPlayers}
+                            </div>
                         </div>
-                    `;
+                        
+                        <div class="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                            <span><i class="fas fa-clock ml-1 text-sg-pink"></i> ${t.timeoutDuration || 5} דקות TimeOut</span>
+                            <span><i class="fas fa-user ml-1 text-sg-green"></i> ${t.createdBy}</span>
+                        </div>
 
-                    // --- תצוגת מנהל (בחירת מנצח) ---
-                    if (currentUser.role === "Admin" && adminListEl) {
-                        let selectHtml = `<select id="winner-${tId}"><option value="">-- בחר מנצח --</option>`;
-                        tourney.registeredPlayers.forEach(p => { selectHtml += `<option value="${p.id}">${p.username}</option>`; });
-                        selectHtml += `</select>`;
+                        <div class="flex gap-2">
+                            ${canRegister ? `<button onclick="event.stopPropagation(); registerToTournament('${t.id}')" class="btn-sg flex-1 py-2 rounded-lg text-sm">הירשם</button>` : ''}
+                            ${isRegistered ? `<span class="flex-1 py-2 rounded-lg text-sm bg-sg-green/20 text-sg-green text-center font-bold">רשום ✓</span>` : ''}
+                            ${isFull && !isRegistered ? `<span class="flex-1 py-2 rounded-lg text-sm bg-gray-800 text-gray-400 text-center">מלא</span>` : ''}
+                            ${isAdmin ? `<button onclick="event.stopPropagation(); deleteTournament('${t.id}')" class="px-3 py-2 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-                        adminListEl.innerHTML += `
-                            <div class="tourney-item" style="flex-direction: column; align-items: stretch; border-left: 5px solid #FFD700; border-right: none;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <strong>${tourney.name} (${registeredCount}/${tourney.maxPlayers} שחקנים)</strong>
+        window.openCreateModal = () => {
+            document.getElementById('createModal').classList.remove('hidden');
+        };
+
+        window.closeCreateModal = () => {
+            document.getElementById('createModal').classList.add('hidden');
+        };
+
+        window.createTournament = async () => {
+            const name = document.getElementById('tournamentName').value.trim();
+            const desc = document.getElementById('tournamentDesc').value.trim();
+            const max = parseInt(document.getElementById('tournamentMax').value) || 16;
+            const timeout = parseInt(document.getElementById('tournamentTimeout').value) || 5;
+
+            if (!name) return showToast('הכנס שם לטורניר', 'error');
+
+            const tournament = {
+                name,
+                description: desc,
+                maxPlayers: max,
+                timeoutDuration: timeout,
+                players: [],
+                status: 'open',
+                createdBy: currentUser.username,
+                createdById: currentUser.id,
+                createdAt: Date.now(),
+                winner: null
+            };
+
+            await setDoc(doc(collection(db, 'tournaments')), tournament);
+            showToast('הטורניר נוצר בהצלחה!', 'success');
+            closeCreateModal();
+            
+            // Reset form
+            document.getElementById('tournamentName').value = '';
+            document.getElementById('tournamentDesc').value = '';
+        };
+
+        window.registerToTournament = async (tournamentId) => {
+            const t = tournamentsCache.find(x => x.id === tournamentId);
+            if (!t || t.players?.length >= t.maxPlayers) {
+                return showToast('הטורניר מלא!', 'error');
+            }
+            if (t.players?.includes(currentUser.id)) {
+                return showToast('כבר רשום לטורניר זה', 'error');
+            }
+
+            const ref = doc(db, 'tournaments', tournamentId);
+            await updateDoc(ref, {
+                players: arrayUnion(currentUser.id)
+            });
+
+            // Update user stats
+            await updateDoc(doc(db, 'users', currentUser.id), {
+                tournamentsJoined: increment(1)
+            });
+
+            showToast('נרשמת לטורניר בהצלחה!', 'success');
+        };
+
+        window.deleteTournament = async (id) => {
+            if (!confirm('האם אתה בטוח שברצונך למחוק את הטורניר?')) return;
+            await deleteDoc(doc(db, 'tournaments', id));
+            showToast('הטורניר נמחק', 'success');
+        };
+
+        // Tournament Detail
+        window.openTournamentDetail = async (id) => {
+            const t = tournamentsCache.find(x => x.id === id);
+            if (!t) return;
+
+            const modal = document.getElementById('tournamentModal');
+            const content = document.getElementById('tournamentDetailContent');
+            const isAdmin = currentUser.role === 'admin';
+            const isRegistered = t.players?.includes(currentUser.id);
+
+            // Get player details
+            const playerDetails = [];
+            for (const pid of (t.players || [])) {
+                const u = usersCache.find(u => u.id === pid);
+                if (u) playerDetails.push(u);
+            }
+
+            content.innerHTML = `
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-black text-sg-green mb-2">${t.name}</h2>
+                    <p class="text-gray-400">${t.description || ''}</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="bg-sg-dark rounded-lg p-3 border border-sg-border">
+                        <div class="text-2xl font-orbitron text-sg-green">${t.players?.length || 0}</div>
+                        <div class="text-xs text-gray-400">משתתפים</div>
+                    </div>
+                    <div class="bg-sg-dark rounded-lg p-3 border border-sg-border">
+                        <div class="text-2xl font-orbitron text-sg-pink">${t.maxPlayers}</div>
+                        <div class="text-xs text-gray-400">מקסימום</div>
+                    </div>
+                    <div class="bg-sg-dark rounded-lg p-3 border border-sg-border">
+                        <div class="text-2xl font-orbitron text-white">${t.timeoutDuration || 5}ד'</div>
+                        <div class="text-xs text-gray-400">TimeOut</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-sg-green font-bold mb-3">משתתפים (${playerDetails.length})</h3>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        ${playerDetails.map(p => `
+                            <div class="flex items-center justify-between bg-sg-dark rounded-lg p-3 border border-sg-border">
+                                <div class="flex items-center gap-3">
+                                    <img src="${p.avatar}" class="w-8 h-8 rounded-full">
+                                    <span class="font-bold ${p.id === currentUser.id ? 'text-sg-green' : ''}">${p.username}</span>
+                                    <span class="text-xs px-2 py-1 rounded-full ${p.role === 'admin' ? 'role-admin' : p.role === 'helper' ? 'role-helper' : 'role-player'}">${p.role}</span>
                                 </div>
-                                ${selectHtml}
-                                <button class="btn btn-pink" onclick="closeTournament('${tId}')">הכרז מנצח וסגור טורניר</button>
+                                ${isAdmin && t.status !== 'closed' ? `
+                                    <button onclick="setWinner('${t.id}', '${p.id}')" class="text-xs btn-sg px-3 py-1 rounded">הכרז כמנצח</button>
+                                </ : ''}
                             </div>
-                        `;
-                    }
-                });
-            });
-        }
+                        `).join('')}
+                        ${playerDetails.length === 0 ? '<p class="text-gray-500 text-center py-4">אין משתתפים עדיין</p>' : ''}
+                    </div>
+                </div>
 
-        // 6. הרשמה לטורניר
-        window.joinTournament = async function(tourneyId) {
-            try {
-                const tourneyRef = doc(db, "tournaments", tourneyId);
-                await updateDoc(tourneyRef, {
-                    registeredPlayers: arrayUnion({ id: currentUser.id, username: currentUser.username })
-                });
-                showToast("נרשמת בהצלחה לטורניר! תתכונן...");
-            } catch (error) { showToast("שגיאה בהרשמה", "error"); }
-        }
-
-        // 7. סגירת טורניר והענקת נקודות (אדמין בלבד)
-        window.closeTournament = async function(tourneyId) {
-            const winnerSelect = document.getElementById(`winner-${tourneyId}`);
-            const winnerId = winnerSelect ? winnerSelect.value : null;
-
-            if (!winnerId) return showToast("חובה לבחור מנצח כדי לסגור את הטורניר!", "error");
-
-            try {
-                // א. עדכון נקודות למנצח
-                const winnerRef = doc(db, "users", winnerId);
-                const winnerSnap = await getDoc(winnerRef);
-                if (winnerSnap.exists()) {
-                    let currentPoints = winnerSnap.data().points || 0;
-                    await updateDoc(winnerRef, { points: currentPoints + 1 });
-                }
-
-                // ב. סגירת הטורניר (שינוי סטטוס)
-                const tourneyRef = doc(db, "tournaments", tourneyId);
-                await updateDoc(tourneyRef, { status: "closed", winnerId: winnerId });
-
-                showToast("הטורניר נסגר והנקודה הוענקה למנצח!");
-            } catch (error) { showToast("שגיאה בסגירת הטורניר", "error"); console.error(error); }
-        }
-
-        // 8. טעינת טבלת מובילים (Leaderboard)
-        async function loadLeaderboard() {
-            const q = query(collection(db, "users"), orderBy("points", "desc"), fbLimit(5));
-            onSnapshot(q, (snapshot) => {
-                const board = document.getElementById('leaderboard-list');
-                board.innerHTML = '';
-                let rank = 1;
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    let crown = rank === 1 ? '👑' : '';
-                    let topClass = rank === 1 ? 'top-1' : '';
-                    board.innerHTML += `
-                        <div class="leaderboard-item ${topClass}">
-                            <span>${rank}. ${data.username} ${crown}</span>
-                            <span style="color:var(--squid-green); font-weight:bold;">${data.points} נק'</span>
+                ${isAdmin && t.status !== 'closed' ? `
+                    <div class="border-t border-sg-border pt-4">
+                        <h3 class="text-sg-pink font-bold mb-3">פעולות אדמין</h3>
+                        <div class="flex gap-2">
+                            <button onclick="closeTournament('${t.id}')" class="btn-pink flex-1 py-3 rounded-lg">סגור טורניר</button>
                         </div>
-                    `;
-                    rank++;
+                    </div>
+                ` : ''}
+
+                ${t.winner ? `
+                    <div class="mt-4 p-4 bg-sg-green/10 border border-sg-green rounded-lg text-center">
+                        <i class="fas fa-trophy text-sg-green text-2xl mb-2"></i>
+                        <p class="text-sg-green font-bold">המנצח: ${t.winnerName || t.winner}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.classList.remove('hidden');
+        };
+
+        window.closeTournamentModal = () => {
+            document.getElementById('tournamentModal').classList.add('hidden');
+        };
+
+        window.setWinner = async (tournamentId, winnerId) => {
+            const winner = usersCache.find(u => u.id === winnerId);
+            if (!winner) return;
+
+            if (!confirm(`האם להכריז על ${winner.username} כמנצח? הוא יקבל נקודה!`)) return;
+
+            const t = tournamentsCache.find(x => x.id === tournamentId);
+            
+            // Update tournament
+            await updateDoc(doc(db, 'tournaments', tournamentId), {
+                status: 'closed',
+                winner: winnerId,
+                winnerName: winner.username,
+                endedAt: Date.now()
+            });
+
+            // Update winner points
+            const newPoints = (winner.points || 0) + 1;
+            await updateDoc(doc(db, 'users', winnerId), {
+                points: increment(1),
+                wins: increment(1)
+            });
+
+            // Check for promotion
+            if (winner.role === 'helper' && newPoints >= HELPER_PROMOTION_POINTS) {
+                await setDoc(doc(collection(db, 'notifications')), {
+                    type: 'promotion_helper',
+                    message: `הלפר ${winner.username} הגיע ל-${HELPER_PROMOTION_POINTS} נקודות! זמן לקדם אותו לאדמין!`,
+                    userId: winnerId,
+                    username: winner.username,
+                    read: false,
+                    createdAt: Date.now()
                 });
+                showToast(`${winner.username} מוכן לקידום לאדמין!`, 'success');
+            } else if (winner.role === 'player' && newPoints >= PLAYER_PROMOTION_POINTS) {
+                await setDoc(doc(collection(db, 'notifications')), {
+                    type: 'promotion_player',
+                    message: `השחקן ${winner.username} הגיע ל-${PLAYER_PROMOTION_POINTS} נקודות! הוא זכאי להצטרף לצוות!`,
+                    userId: winnerId,
+                    username: winner.username,
+                    read: false,
+                    createdAt: Date.now()
+                });
+                showToast(`${winner.username} זכאי להצטרף לצוות!`, 'success');
+            }
+
+            showToast(`${winner.username} קיבל נקודה!`, 'success');
+            closeTournamentModal();
+        };
+
+        window.closeTournament = async (id) => {
+            await updateDoc(doc(db, 'tournaments', id), { status: 'closed' });
+            showToast('הטורניר נסגר', 'info');
+            closeTournamentModal();
+        };
+
+        // Profile
+        function updateProfile() {
+            if (!currentUser) return;
+            
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            document.getElementById('profileDiscordId').textContent = 'ID: ' + currentUser.id;
+            document.getElementById('profileAvatar').src = currentUser.avatar;
+            
+            const roleBadge = document.getElementById('profileRoleBadge');
+            roleBadge.textContent = currentUser.role.toUpperCase();
+            roleBadge.className = `absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-black ${currentUser.role === 'admin' ? 'role-admin' : currentUser.role === 'helper' ? 'role-helper' : 'role-player'}`;
+
+            // Get fresh data
+            getDoc(doc(db, 'users', currentUser.id)).then(snap => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('profilePoints').textContent = data.points || 0;
+                    document.getElementById('profileWins').textContent = data.wins || 0;
+                    document.getElementById('profileTournaments').textContent = data.tournamentsJoined || 0;
+
+                    // Progress bar
+                    const target = currentUser.role === 'helper' ? HELPER_PROMOTION_POINTS : PLAYER_PROMOTION_POINTS;
+                    const points = data.points || 0;
+                    const pct = Math.min((points / target) * 100, 100);
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    document.getElementById('progressText').textContent = `${points} / ${target} נקודות נדרשות`;
+
+                    // Promotion alert
+                    const alert = document.getElementById('promotionAlert');
+                    if (currentUser.role === 'helper' && points >= HELPER_PROMOTION_POINTS) {
+                        alert.classList.remove('hidden');
+                        document.getElementById('promotionText').textContent = 'הגעת ל-10 נקודות! מוכן לקידום לאדמין!';
+                    } else if (currentUser.role === 'player' && points >= PLAYER_PROMOTION_POINTS) {
+                        alert.classList.remove('hidden');
+                        document.getElementById('promotionText').textContent = 'הגעת ל-20 נקודות! אתה זכאי להצטרף לצוות!';
+                    } else {
+                        alert.classList.add('hidden');
+                    }
+                }
             });
         }
+
+        // Admin Panel
+        async function loadAdminPanel() {
+            // Load notifications
+            const notifQ = query(collection(db, 'notifications'), orderBy('createdAt', 'desc'));
+            const notifSnap = await getDocs(notifQ);
+            const notifs = notifSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+            
+            const notifContainer = document.getElementById('adminNotifications');
+            if (notifs.length === 0) {
+                notifContainer.innerHTML = '<p class="text-gray-500 text-center py-8">אין התראות חדשות</p>';
+            } else {
+                notifContainer.innerHTML = notifs.map(n => `
+                    <div class="bg-sg-dark rounded-lg p-4 border ${n.read ? 'border-gray-700' : 'border-sg-pink'}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs ${n.type === 'promotion_helper' ? 'text-sg-pink' : 'text-sg-green'} font-bold">${n.type === 'promotion_helper' ? 'קידום לאדמין' : 'הצטרפות לצוות'}</span>
+                                <p class="text-sm mt-1">${n.message}</p>
+                            </div>
+                            <button onclick="markNotificationRead('${n.id}')" class="text-gray-500 hover:text-white text-xs">סמן כנקרא</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Load admin tournaments
+            const adminT = tournamentsCache.filter(t => t.createdById === currentUser.id);
+            document.getElementById('adminTournamentsList').innerHTML = adminT.map(t => `
+                <div class="flex items-center justify-between bg-sg-dark rounded-lg p-3 border border-sg-border">
+                    <div>
+                        <div class="font-bold text-sm">${t.name}</div>
+                        <div class="text-xs text-gray-400">${t.status === 'open' ? 'פתוח' : 'נסגר'} | ${t.players?.length || 0} משתתפים</div>
+                    </div>
+                    <button onclick="openTournamentDetail('${t.id}')" class="text-sg-green text-sm hover:underline">ניהול</button>
+                </div>
+            `).join('') || '<p class="text-gray-500 text-center py-4">לא יצרת טורנירים עדיין</p>';
+
+            // Load players table
+            updateAdminPlayersTable();
+        }
+
+        function updateAdminPlayersTable() {
+            const tbody = document.getElementById('adminPlayersTable');
+            tbody.innerHTML = usersCache.map(u => `
+                <tr class="border-b border-sg-border/50">
+                    <td class="py-3 pl-4 flex items-center gap-2">
+                        <img src="${u.avatar}" class="w-6 h-6 rounded-full">
+                        <span class="${u.id === currentUser.id ? 'text-sg-green' : ''}">${u.username}</span>
+                    </td>
+                    <td class="py-3 pl-4">
+                        <span class="text-xs px-2 py-1 rounded-full ${u.role === 'admin' ? 'role-admin' : u.role === 'helper' ? 'role-helper' : 'role-player'}">${u.role}</span>
+                    </td>
+                    <td class="py-3 pl-4 font-orbitron text-sg-green">${u.points || 0}</td>
+                    <td class="py-3 pl-4">
+                        ${u.role !== 'admin' ? `
+                            <button onclick="promoteUser('${u.id}')" class="text-xs bg-sg-green/20 text-sg-green px-2 py-1 rounded hover:bg-sg-green/30">קדם</button>
+                            <button onclick="resetPoints('${u.id}')" class="text-xs bg-red-900/20 text-red-400 px-2 py-1 rounded hover:bg-red-900/30 mr-1">אפס</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.markNotificationRead = async (id) => {
+            await updateDoc(doc(db, 'notifications', id), { read: true });
+            loadAdminPanel();
+        };
+
+        window.promoteUser = async (userId) => {
+            const user = usersCache.find(u => u.id === userId);
+            if (!user) return;
+            
+            const newRole = user.role === 'player' ? 'helper' : 'admin';
+            if (!confirm(`לקדם את ${user.username} ל-${newRole}?`)) return;
+            
+            await updateDoc(doc(db, 'users', userId), { role: newRole });
+            showToast(`${user.username} קודם ל-${newRole}!`, 'success');
+        };
+
+        window.resetPoints = async (userId) => {
+            if (!confirm('לאפס נקודות?')) return;
+            await updateDoc(doc(db, 'users', userId), { points: 0, wins: 0 });
+            showToast('הנקודות אופסו', 'success');
+        };
+
+        // Leaderboard
+        function updateLeaderboard() {
+            const sorted = [...usersCache].sort((a, b) => (b.points || 0) - (a.points || 0));
+            const tbody = document.getElementById('leaderboardBody');
+            
+            tbody.innerHTML = sorted.map((u, i) => `
+                <tr class="border-b border-sg-border/50 hover:bg-sg-dark/50 transition">
+                    <td class="py-4 px-6">
+                        ${i === 0 ? '<i class="fas fa-crown text-yellow-400"></i>' : i === 1 ? '<i class="fas fa-medal text-gray-300"></i>' : i === 2 ? '<i class="fas fa-medal text-amber-600"></i>' : `<span class="text-gray-500 font-orbitron">#${i + 1}</span>`}
+                    </td>
+                    <td class="py-4 px-6 flex items-center gap-3">
+                        <img src="${u.avatar}" class="w-8 h-8 rounded-full border border-sg-border">
+                        <span class="font-bold ${u.id === currentUser.id ? 'text-sg-green' : ''}">${u.username}</span>
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="text-xs px-2 py-1 rounded-full ${u.role === 'admin' ? 'role-admin' : u.role === 'helper' ? 'role-helper' : 'role-player'}">${u.role}</span>
+                    </td>
+                    <td class="py-4 px-6 font-orbitron font-bold text-sg-green text-lg">${u.points || 0}</td>
+                    <td class="py-4 px-6 text-gray-400">${u.tournamentsJoined || 0}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Realtime Listeners
+        function setupRealtimeListeners() {
+            onSnapshot(collection(db, 'tournaments'), (snap) => {
+                tournamentsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderTournaments();
+                if (!document.getElementById('adminSection').classList.contains('hidden')) {
+                    loadAdminPanel();
+                }
+            });
+
+            onSnapshot(collection(db, 'users'), (snap) => {
+                usersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (!document.getElementById('leaderboardSection').classList.contains('hidden')) {
+                    updateLeaderboard();
+                }
+                if (!document.getElementById('adminSection').classList.contains('hidden')) {
+                    updateAdminPlayersTable();
+                }
+            });
+        }
+
+        async function loadUsers() {
+            const snap = await getDocs(collection(db, 'users'));
+            usersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        // Toast
+        window.showToast = (message, type = 'info') => {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-sg-green text-black',
+                error: 'bg-red-500 text-white',
+                info: 'bg-sg-pink text-white'
+            };
+            toast.className = `toast ${colors[type] || colors.info} font-bold shadow-lg`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : type === 'error' ? 'fa-exclamation' : 'fa-info'} ml-2"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        };
+
+        // Expose functions to window
+        window.registerToTournament = window.registerToTournament;
+        window.deleteTournament = window.deleteTournament;
+        window.setWinner = window.setWinner;
+        window.closeTournament = window.closeTournament;
+        window.markNotificationRead = window.markNotificationRead;
+        window.promoteUser = window.promoteUser;
+        window.resetPoints = window.resetPoints;
     </script>
 </body>
 </html>
